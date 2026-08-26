@@ -4,6 +4,8 @@ import CodeEditor from "../components/CodeEditor";
 import TestResults from "../components/TestResults";
 
 function ChallengeWorkspace() {
+    const [terminalHeight, setTerminalHeight] = useState(150);
+    
   const [challenge, setChallenge] = useState({
   challengeId: "1",
   title: "Fix Broken Login",
@@ -62,15 +64,17 @@ useEffect(() => {
         throw new Error("Failed to fetch challenge");
       }
 
-      const data = await response.json();
+  const responseData = await response.json();
 
-      setChallenge(data);
+const challengeData = responseData.data;
 
-      const firstFile = Object.keys(data.files)[0];
+setChallenge(challengeData);
 
-      if (firstFile) {
-        setSelectedFile(firstFile);
-      }
+const firstFile = Object.keys(challengeData.files)[0];
+
+if (firstFile) {
+  setSelectedFile(firstFile);
+}
     } catch (error) {
       console.error("Failed to fetch challenge:", error);
     }
@@ -123,6 +127,25 @@ function getLanguage(fileName) {
   if (fileName.endsWith(".html")) return "html";
 
   return "plaintext";
+}
+function startResize(e) {
+  e.preventDefault();
+
+  function resize(e) {
+    const newHeight = window.innerHeight - e.clientY;
+
+    if (newHeight >= 70 && newHeight <= 500) {
+      setTerminalHeight(newHeight);
+    }
+  }
+
+  function stopResize() {
+    document.removeEventListener("mousemove", resize);
+    document.removeEventListener("mouseup", stopResize);
+  }
+
+  document.addEventListener("mousemove", resize);
+  document.addEventListener("mouseup", stopResize);
 }
   return (
   <div className="workspace">
@@ -180,10 +203,20 @@ function getLanguage(fileName) {
         </div>
       </div>
     </div>
-    <TestResults
-      result={result}
-      isRunning={isRunning}
-    />
+   <div
+  className="resize-handle"
+  onMouseDown={startResize}
+></div>
+
+<div
+  className="terminal-panel"
+  style={{ height: `${terminalHeight}px` }}
+>
+  <TestResults
+    result={result}
+    isRunning={isRunning}
+  />
+</div>
   </div>
 );
 }
