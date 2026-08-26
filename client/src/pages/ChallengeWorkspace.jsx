@@ -64,15 +64,17 @@ useEffect(() => {
         throw new Error("Failed to fetch challenge");
       }
 
-      const data = await response.json();
+  const responseData = await response.json();
 
-      setChallenge(data);
+const challengeData = responseData.data;
 
-      const firstFile = Object.keys(data.files)[0];
+setChallenge(challengeData);
 
-      if (firstFile) {
-        setSelectedFile(firstFile);
-      }
+const firstFile = Object.keys(challengeData.files)[0];
+
+if (firstFile) {
+  setSelectedFile(firstFile);
+}
     } catch (error) {
       console.error("Failed to fetch challenge:", error);
     }
