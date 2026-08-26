@@ -86,11 +86,6 @@ body {
   border-radius: 4px;
 }
 
-.workspace-content {
-  flex: 1;
-  display: flex;
-  min-height: 0;
-}
 .editor-container {
   flex: 1;
   min-height: 0;
@@ -124,10 +119,28 @@ body {
 .challenge-panel ul {
   padding-left: 20px;
 }
-.test-results {
-  height: 130px;
+.resize-handle {
+  height: 5px;
+  background: #3c3c3c;
+  cursor: ns-resize;
+  flex-shrink: 0;
+}
+
+.resize-handle:hover {
+  background: #007acc;
+}
+
+.terminal-panel {
+  min-height: 70px;
+  max-height: 500px;
   background: #181818;
-  border-top: 1px solid #3c3c3c;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.test-results {
+  height: 100%;
+  background: #181818;
   padding: 15px 20px;
   overflow-y: auto;
 }
@@ -139,4 +152,30 @@ body {
 .test-results p {
   color: #cccccc;
   margin-bottom: 5px;
+}
+.folder-item {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.folder-item:hover {
+  background: #333;
+}
+
+.folder-children {
+  padding-left: 18px;
+}
+.file-item {
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.workspace-content {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.challenge-panel {
+  overflow-y: auto;
 }
