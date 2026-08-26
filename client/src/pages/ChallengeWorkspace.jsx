@@ -4,6 +4,8 @@ import CodeEditor from "../components/CodeEditor";
 import TestResults from "../components/TestResults";
 
 function ChallengeWorkspace() {
+    const [terminalHeight, setTerminalHeight] = useState(150);
+    
   const [challenge, setChallenge] = useState({
   challengeId: "1",
   title: "Fix Broken Login",
@@ -124,6 +126,25 @@ function getLanguage(fileName) {
 
   return "plaintext";
 }
+function startResize(e) {
+  e.preventDefault();
+
+  function resize(e) {
+    const newHeight = window.innerHeight - e.clientY;
+
+    if (newHeight >= 70 && newHeight <= 500) {
+      setTerminalHeight(newHeight);
+    }
+  }
+
+  function stopResize() {
+    document.removeEventListener("mousemove", resize);
+    document.removeEventListener("mouseup", stopResize);
+  }
+
+  document.addEventListener("mousemove", resize);
+  document.addEventListener("mouseup", stopResize);
+}
   return (
   <div className="workspace">
     <header className="topbar">
@@ -180,10 +201,20 @@ function getLanguage(fileName) {
         </div>
       </div>
     </div>
-    <TestResults
-      result={result}
-      isRunning={isRunning}
-    />
+   <div
+  className="resize-handle"
+  onMouseDown={startResize}
+></div>
+
+<div
+  className="terminal-panel"
+  style={{ height: `${terminalHeight}px` }}
+>
+  <TestResults
+    result={result}
+    isRunning={isRunning}
+  />
+</div>
   </div>
 );
 }
