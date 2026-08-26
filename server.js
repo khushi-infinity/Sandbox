@@ -1,14 +1,23 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
-const challengeRoutes = require('./routes/challengeRoutes');
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-app.use('/api/challenges', challengeRoutes);
+// Temporary mock challenge for testing
+app.get('/api/challenges/random', (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      _id: "64f1a2b3c4d5",
+      title: "Reverse a String",
+      description: "Write a function that reverses a string.",
+      difficulty: "Easy",
+      starterCode: "function reverseString(str) {\n  // Write code here\n}"
+    }
+  });
+});
 
 const PORT = 5000;
 app.listen(PORT, () => {
