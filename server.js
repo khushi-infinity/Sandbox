@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const { runChallenge } = require("./controllers/challengeController");
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -68,13 +68,10 @@ app.get("/api/challenges/random", (req, res) => {
 
   lastIndex = randomIndex;
 
-  res.status(200).json({
-    success: true,
-    data: challenges[randomIndex]
-  });
+  res.status(200).json(challenges[randomIndex]);
 });
-
-const PORT = 5000;
+app.post("/api/challenges/run", runChallenge);
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
