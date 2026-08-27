@@ -57,7 +57,7 @@ useEffect(() => {
   async function fetchChallenge() {
     try {
       const response = await fetch(
-      "https://sandbox-1-4n27.onrender.com/api/challenges/random"
+     "https://sandbox-4-fka8.onrender.com/api/challenges/random"
       );
 
       if (!response.ok) {
@@ -92,7 +92,7 @@ async function handleRun() {
     setResult(null);
 
     const response = await fetch(
-       "https://sandbox-1-4n27.onrender.com/api/challenges/run",
+       "https://sandbox-4-fka8.onrender.com/api/challenges/run",
       {
         method: "POST",
         headers: {
