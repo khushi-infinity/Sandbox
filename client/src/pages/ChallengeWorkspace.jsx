@@ -57,14 +57,20 @@ useEffect(() => {
   async function fetchChallenge() {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/challenges/random"
+      "https://sandbox-1-4n27.onrender.com/api/challenges/random"
       );
 
       if (!response.ok) {
         throw new Error("Failed to fetch challenge");
       }
 
- const challengeData = await response.json();
+ const responseData = await response.json();
+
+const challengeData = responseData.data || responseData;
+
+if (!challengeData || !challengeData.files) {
+  throw new Error("Invalid challenge data received");
+}
 
 setChallenge(challengeData);
 
@@ -86,7 +92,7 @@ async function handleRun() {
     setResult(null);
 
     const response = await fetch(
-      "http://localhost:5000/api/challenges/run",
+       "https://sandbox-1-4n27.onrender.com/api/challenges/run",
       {
         method: "POST",
         headers: {
