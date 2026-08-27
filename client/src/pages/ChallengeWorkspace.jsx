@@ -64,9 +64,7 @@ useEffect(() => {
         throw new Error("Failed to fetch challenge");
       }
 
-  const responseData = await response.json();
-
-const challengeData = responseData.data;
+ const challengeData = await response.json();
 
 setChallenge(challengeData);
 
