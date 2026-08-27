@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { runChallenge } = require("./controllers/challengeController");
+const { runChallenge } = require("./server/controllers/challengeController");
 const app = express();
 app.use(cors());
 app.use(express.json());
