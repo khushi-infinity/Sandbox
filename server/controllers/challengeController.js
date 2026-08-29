@@ -1,22 +1,27 @@
 const challenges = require("../challenges/challenges");
+const User = require("../models/User");
 
 const testChallenge1 = require("../tests/challenge1.test");
 const testChallenge2 = require("../tests/challenge2.test");
 const testChallenge3 = require("../tests/challenge3.test");
 
-function runChallenge(req, res) {
+async function runChallenge(req, res) {
   try {
     const { challengeId, files } = req.body;
+
+    const userId = req.user._id;
 
     if (!challengeId || !files) {
       return res.status(400).json({
         passed: false,
-        message: "challengeId and files are required",
+        message:
+          "challengeId and files are required",
       });
     }
 
     const challenge = challenges.find(
-      (item) => item.challengeId === challengeId
+      (item) =>
+        item.challengeId === challengeId
     );
 
     if (!challenge) {
@@ -26,36 +31,107 @@ function runChallenge(req, res) {
       });
     }
 
-   if (challengeId === "1") {
-  const result = testChallenge1(files);
+    let result;
 
-  return res.json(result);
-}
+    if (challengeId === "1") {
+      result = testChallenge1(files);
+    } else if (challengeId === "2") {
+      result = testChallenge2(files);
+    } else if (challengeId === "3") {
+      result = testChallenge3(files);
+    } else {
+      return res.json({
+        passed: false,
+        testsPassed: 0,
+        totalTests: 0,
+        message:
+          "Tests for this challenge are not available yet.",
+      });
+    }
 
-if (challengeId === "2") {
-  const result = testChallenge2(files);
+    let newlySolved = false;
+    let updatedUser = null;
 
-  return res.json(result);
-}
+    // ------------------------------------
+    // UPDATE ONLY IF PASSED
+    // ------------------------------------
 
-if (challengeId === "3") {
-  const result = testChallenge3(files);
+    if (result.passed) {
+      const user = await User.findById(userId);
 
-  return res.json(result);
-}
+      if (!user) {
+        return res.status(404).json({
+          passed: false,
+          message: "User not found",
+        });
+      }
+
+      const alreadySolved =
+        user.solvedChallenges.includes(
+          challengeId
+        );
+
+      // ------------------------------------
+      // ONLY COUNT NEW SOLVES
+      // ------------------------------------
+
+      if (!alreadySolved) {
+        user.recordSolve();
+
+        user.solvedChallenges.push(
+          challengeId
+        );
+
+        if (challengeId === "1") {
+          user.reactScore = Math.min(
+            100,
+            user.reactScore + 5
+          );
+        }
+
+        if (challengeId === "2") {
+          user.javascriptScore = Math.min(
+            100,
+            user.javascriptScore + 5
+          );
+        }
+
+        if (challengeId === "3") {
+          user.reactScore = Math.min(
+            100,
+            user.reactScore + 5
+          );
+        }
+
+        await user.save();
+
+        newlySolved = true;
+        updatedUser = user;
+
+        console.log(
+          `New challenge solved: ${challengeId} by ${user.email}`
+        );
+      }
+    }
 
     return res.json({
-      passed: false,
-      testsPassed: 0,
-      totalTests: 0,
-      message: "Tests for this challenge are not available yet.",
+      ...result,
+      newlySolved,
+
+      progress: updatedUser
+        ? updatedUser.progressSummary()
+        : null,
     });
   } catch (error) {
     console.error(error);
 
-    return res.status(500).json({
+    return res.status(
+      error.statusCode || 500
+    ).json({
       passed: false,
-      message: "Failed to run challenge",
+      message:
+        error.message ||
+        "Failed to run challenge",
     });
   }
 }
